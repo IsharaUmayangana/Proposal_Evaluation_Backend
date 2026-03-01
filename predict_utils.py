@@ -305,7 +305,7 @@ def explain_prediction(X: pd.DataFrame, top_k: int = 6) -> pd.DataFrame:
     desc_svd = shap_contrib[shap_contrib["feature"].str.contains(r'desc_svd', regex=True)].copy()
     sub_svd = shap_contrib[shap_contrib["feature"].str.contains(r'sub_svd', regex=True)].copy()
     other_features = shap_contrib[
-        ~shap_contrib["feature"].str.contains(r'(desc_svd|sub_svd)', regex=True)
+        ~shap_contrib["feature"].str.contains(r'(?:desc_svd|sub_svd)', regex=True)
     ].copy()
     
     result_list = []
