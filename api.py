@@ -9,6 +9,12 @@ from predict_utils import (
     explain_prediction
 )
 
+from employment_predict_utils import (
+    predict_employment,
+    prepare_features as prepare_emp_features,
+    explain_prediction as explain_emp
+)
+
 app = FastAPI(title="BOI Investment Predictor")
 
 # --- CORS (Vite dev server) ---
@@ -56,8 +62,13 @@ class PredictionResponse(BaseModel):
     predicted_investment_usd_mn: float
     explanations: Optional[List[Explanation]] = None
 
+class EmploymentPredictionResponse(BaseModel):
+    log_prediction: float
+    predicted_employment: float
+    explanations: Optional[List[Explanation]] = None
 
-# -------- Prediction Endpoint --------
+
+# -------- Investment Prediction Endpoint --------
 @app.post("/predict", response_model=PredictionResponse)
 def predict(data: ProjectInput):
     user_input = data.dict()
@@ -84,5 +95,28 @@ def predict(data: ProjectInput):
     return {
         "log_prediction": float(log_pred),
         "predicted_investment_usd_mn": float(real_pred),
+        "explanations": explanations
+    }
+
+
+# -------- Employment Prediction Endpoint --------
+@app.post("/predict_employment", response_model=EmploymentPredictionResponse)
+def predict_employment_endpoint(data: ProjectInput):
+
+    user_input = data.dict()
+
+    log_pred, real_pred = predict_employment(user_input)
+
+    X = prepare_emp_features(user_input)
+    explanation_df = explain_emp(X, top_k=6)
+
+    explanations = [
+        {"feature": row.feature, "impact": float(row.impact)}
+        for row in explanation_df.itertuples()
+    ]
+
+    return {
+        "log_prediction": float(log_pred),
+        "predicted_employment": float(real_pred),
         "explanations": explanations
     }

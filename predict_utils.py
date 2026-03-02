@@ -4,24 +4,24 @@ import re
 import joblib
 import shap
 
-# ===============================
+# ===============================   
 # Load artifacts
 # ===============================
-model = joblib.load("Model_Tools/model_lgb.joblib")
+model = joblib.load("Model_Tools/Investment_Prediction/model_lgb.joblib")
 
-tfidf_desc = joblib.load("Model_Tools/tfidf_desc.joblib")
-svd_desc = joblib.load("Model_Tools/svd_desc.joblib")
+tfidf_desc = joblib.load("Model_Tools/Investment_Prediction/tfidf_desc.joblib")
+svd_desc = joblib.load("Model_Tools/Investment_Prediction/svd_desc.joblib")
 
-tfidf_sub = joblib.load("Model_Tools/tfidf_sub.joblib")
-svd_sub = joblib.load("Model_Tools/svd_sub.joblib")
+tfidf_sub = joblib.load("Model_Tools/Investment_Prediction/tfidf_sub.joblib")
+svd_sub = joblib.load("Model_Tools/Investment_Prediction/svd_sub.joblib")
 
-district_te = joblib.load("Model_Tools/district_te.joblib")
-factory_zone_te = joblib.load("Model_Tools/factory_zone_te.joblib")
+district_te = joblib.load("Model_Tools/Investment_Prediction/district_te.joblib")
+factory_zone_te = joblib.load("Model_Tools/Investment_Prediction/factory_zone_te.joblib")
 
-numeric_cols = joblib.load("Model_Tools/numeric_cols.joblib")
-feature_cols = joblib.load("Model_Tools/feature_cols.joblib")
+numeric_cols = joblib.load("Model_Tools/Investment_Prediction/numeric_cols.joblib")
+feature_cols = joblib.load("Model_Tools/Investment_Prediction/feature_cols.joblib")
 
-gdp_lookup = joblib.load("Model_Tools/gdp_lookup.joblib")
+gdp_lookup = joblib.load("Model_Tools/Investment_Prediction/gdp_lookup.joblib")
 
 GLOBAL_MEAN = 0.9399485469451957  # log-scale target mean
 
