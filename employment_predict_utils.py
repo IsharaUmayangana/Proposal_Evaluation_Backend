@@ -3,24 +3,32 @@ import pandas as pd
 import re
 import joblib
 import shap
+from pathlib import Path
+
+ARTIFACT_DIR = Path("Model_Tools") / "Employment_Prediction"
+
+
+def _load_artifact(filename: str):
+    return joblib.load(ARTIFACT_DIR / filename)
+
 
 # ===============================
 # Load Employment Artifacts
 # ===============================
-model = joblib.load("Model_Tools/Employment_Prediction/model_lgb.joblib")
+model = _load_artifact("model_lgb.joblib")
 
-tfidf_desc = joblib.load("Model_Tools/Employment_Prediction/tfidf_desc.joblib")
-svd_desc = joblib.load("Model_Tools/Employment_Prediction/svd_desc.joblib")
+tfidf_desc = _load_artifact("tfidf_desc.joblib")
+svd_desc = _load_artifact("svd_desc.joblib")
 
-tfidf_sub = joblib.load("Model_Tools/Employment_Prediction/tfidf_sub.joblib")
-svd_sub = joblib.load("Model_Tools/Employment_Prediction/svd_sub.joblib")
+tfidf_sub = _load_artifact("tfidf_sub.joblib")
+svd_sub = _load_artifact("svd_sub.joblib")
 
-district_te = joblib.load("Model_Tools/Employment_Prediction/district_te.joblib")
-factory_zone_te = joblib.load("Model_Tools/Employment_Prediction/factory_zone_te.joblib")
+district_te = _load_artifact("district_te.joblib")
+factory_zone_te = _load_artifact("factory_zone_te.joblib")
 
-numeric_cols = joblib.load("Model_Tools/Employment_Prediction/numeric_cols.joblib")
-feature_cols = joblib.load("Model_Tools/Employment_Prediction/feature_cols.joblib")
-GLOBAL_MEAN = joblib.load("Model_Tools/Employment_Prediction/global_mean.joblib")
+numeric_cols = _load_artifact("numeric_cols.joblib")
+feature_cols = _load_artifact("feature_cols.joblib")
+GLOBAL_MEAN = _load_artifact("global_mean.joblib")
 
 explainer = shap.TreeExplainer(model)
 

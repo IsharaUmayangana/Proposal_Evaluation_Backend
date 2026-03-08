@@ -3,25 +3,33 @@ import pandas as pd
 import re
 import joblib
 import shap
+from pathlib import Path
 
-# ===============================   
+ARTIFACT_DIR = Path("Model_Tools") / "Investment_Prediction"
+
+
+def _load_artifact(filename: str):
+    return joblib.load(ARTIFACT_DIR / filename)
+
+
+# ===============================
 # Load artifacts
 # ===============================
-model = joblib.load("Model_Tools/Investment_Prediction/model_lgb.joblib")
+model = _load_artifact("model_lgb.joblib")
 
-tfidf_desc = joblib.load("Model_Tools/Investment_Prediction/tfidf_desc.joblib")
-svd_desc = joblib.load("Model_Tools/Investment_Prediction/svd_desc.joblib")
+tfidf_desc = _load_artifact("tfidf_desc.joblib")
+svd_desc = _load_artifact("svd_desc.joblib")
 
-tfidf_sub = joblib.load("Model_Tools/Investment_Prediction/tfidf_sub.joblib")
-svd_sub = joblib.load("Model_Tools/Investment_Prediction/svd_sub.joblib")
+tfidf_sub = _load_artifact("tfidf_sub.joblib")
+svd_sub = _load_artifact("svd_sub.joblib")
 
-district_te = joblib.load("Model_Tools/Investment_Prediction/district_te.joblib")
-factory_zone_te = joblib.load("Model_Tools/Investment_Prediction/factory_zone_te.joblib")
+district_te = _load_artifact("district_te.joblib")
+factory_zone_te = _load_artifact("factory_zone_te.joblib")
 
-numeric_cols = joblib.load("Model_Tools/Investment_Prediction/numeric_cols.joblib")
-feature_cols = joblib.load("Model_Tools/Investment_Prediction/feature_cols.joblib")
+numeric_cols = _load_artifact("numeric_cols.joblib")
+feature_cols = _load_artifact("feature_cols.joblib")
 
-gdp_lookup = joblib.load("Model_Tools/Investment_Prediction/gdp_lookup.joblib")
+gdp_lookup = _load_artifact("gdp_lookup.joblib")
 
 GLOBAL_MEAN = 0.9399485469451957  # log-scale target mean
 
@@ -230,8 +238,6 @@ def get_feature_semantic_meaning(feature_name: str) -> str:
     """
     Convert raw feature names to user-friendly descriptions with semantic meaning.
     """
-    import re
-    
     # User-friendly mappings for common features
     feature_mappings = {
         "log_estimated_total_investments_usd_mn": "Total Investment (USD Mn)",
@@ -258,7 +264,7 @@ def get_feature_semantic_meaning(feature_name: str) -> str:
         return feature_mappings[feature_name]
     
     # Check if it's a description SVD component
-    match = re.match(r'desc_svd_(\d+)', feature_name)
+    match = re.match(r"desc_svd_(\d+)", feature_name)
     if match:
         component_idx = int(match.group(1)) - 1
         try:
@@ -268,11 +274,11 @@ def get_feature_semantic_meaning(feature_name: str) -> str:
             top_terms = ", ".join([f"{term}" for term, _ in interpretation[:2]])
             print("top_terms:", top_terms)
             return f"Product Description: {top_terms}"
-        except:
+        except Exception:
             return feature_name
     
     # Check if it's a sub-product SVD component
-    match = re.match(r'sub_svd_(\d+)', feature_name)
+    match = re.match(r"sub_svd_(\d+)", feature_name)
     if match:
         component_idx = int(match.group(1)) - 1
         try:
@@ -281,7 +287,7 @@ def get_feature_semantic_meaning(feature_name: str) -> str:
             )
             top_terms = ", ".join([f"{term}" for term, _ in interpretation[:2]])
             return f"Sub-Product: {top_terms}"
-        except:
+        except Exception:
             return feature_name
     
     # Fallback: clean up the feature name
@@ -302,8 +308,8 @@ def explain_prediction(X: pd.DataFrame, top_k: int = 6) -> pd.DataFrame:
     })
     
     # Separate SVD types
-    desc_svd = shap_contrib[shap_contrib["feature"].str.contains(r'desc_svd', regex=True)].copy()
-    sub_svd = shap_contrib[shap_contrib["feature"].str.contains(r'sub_svd', regex=True)].copy()
+    desc_svd = shap_contrib[shap_contrib["feature"].str.contains(r"desc_svd", regex=True)].copy()
+    sub_svd = shap_contrib[shap_contrib["feature"].str.contains(r"sub_svd", regex=True)].copy()
     other_features = shap_contrib[
         ~shap_contrib["feature"].str.contains(r'(?:desc_svd|sub_svd)', regex=True)
     ].copy()
